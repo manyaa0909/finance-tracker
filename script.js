@@ -157,6 +157,18 @@ addBtn.addEventListener('click', addTransaction);
 function saveToLocalStorage() {
     localStorage.setItem('transactions', JSON.stringify(transactions));
 }
+function loadDefaultTransactions() {
+    const defaultTransactions = [
+        { id: 1, description: 'Monthly Salary', amount: 50000, type: 'income', category: 'salary' },
+        { id: 2, description: 'Groceries', amount: 3000, type: 'expense', category: 'food' },
+        { id: 3, description: 'Rent', amount: 15000, type: 'expense', category: 'rent' },
+        { id: 4, description: 'Metro Card', amount: 500, type: 'expense', category: 'transport' },
+        { id: 5, description: 'Netflix', amount: 649, type: 'expense', category: 'entertainment' }
+    ];
+    transactions = defaultTransactions;
+    saveToLocalStorage();
+    renderTransactions();
+}
 
 // Load transactions from localStorage
 function loadFromLocalStorage() {
@@ -164,6 +176,9 @@ function loadFromLocalStorage() {
     if (saved) {
         transactions = JSON.parse(saved);
         renderTransactions();
+    } else {
+        // No data found so load defaults
+        loadDefaultTransactions();
     }
 }
 
