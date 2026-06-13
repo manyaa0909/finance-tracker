@@ -14,6 +14,7 @@ const categorySelect = document.getElementById('category');
 const filterCategory = document.getElementById('filter-category');
 const filterType = document.getElementById('filter-type');
 let expenseChart = null;
+const clearBtn = document.getElementById('clear-btn');
 // This function runs every time we add or delete a transaction
 function updateSummary() {
     const income = transactions
@@ -23,9 +24,9 @@ function updateSummary() {
     const expense = transactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const balanceAmount = income - expense;
-  
+
     totalIncome.textContent = '₹' + income;
     totalExpense.textContent = '₹' + expense;
     balance.textContent = (balanceAmount < 0 ? '-₹' : '₹') + Math.abs(balanceAmount);
@@ -126,15 +127,21 @@ function addTransaction() {
     // Create transaction object
     const transaction = {
         id: Date.now(),
-        description:description,
-        amount:amount,
-        type:type,
-        category:category
+        description: description,
+        amount: amount,
+        type: type,
+        category: category
     };
-
+function clearAll() {
+    if (confirm('Are you sure you want to clear all transactions?')) {
+        transactions = [];
+        saveToLocalStorage();
+        renderTransactions();
+    }
+}
     // Add to array and re-render
     transactions.push(transaction);
-    
+
     renderTransactions();
     saveToLocalStorage();
 
@@ -187,3 +194,5 @@ loadFromLocalStorage();
 
 filterCategory.addEventListener('change', renderTransactions);
 filterType.addEventListener('change', renderTransactions);
+
+clearBtn.addEventListener('click', clearAll);
