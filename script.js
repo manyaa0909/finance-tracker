@@ -13,7 +13,7 @@ const balance = document.getElementById('balance');
 const categorySelect = document.getElementById('category');
 const filterCategory = document.getElementById('filter-category');
 const filterType = document.getElementById('filter-type');
-
+let expenseChart = null;
 // This function runs every time we add or delete a transaction
 function updateSummary() {
     const income = transactions
@@ -29,7 +29,54 @@ function updateSummary() {
     totalIncome.textContent = '₹' + income;
     totalExpense.textContent = '₹' + expense;
     balance.textContent = (balanceAmount < 0 ? '-₹' : '₹') + Math.abs(balanceAmount);
+    updateChart();
 
+}
+function updateChart() {
+    // Get only expense transactions
+    const expenses = transactions.filter(t => t.type === 'expense');
+
+    // Group by category and sum amounts
+    const categoryTotals = {};
+    expenses.forEach(t => {
+        if (categoryTotals[t.category]) {
+            categoryTotals[t.category] += t.amount;
+        } else {
+            categoryTotals[t.category] = t.amount;
+        }
+    });
+
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
+
+    // If chart already exists destroy it before redrawing
+    if (expenseChart) {
+        expenseChart.destroy();
+    }
+
+    // If no expenses show nothing
+    if (labels.length === 0) return;
+
+    const ctx = document.getElementById('expense-chart').getContext('2d');
+    expenseChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 }
 
 // This function renders the transaction list on screen
