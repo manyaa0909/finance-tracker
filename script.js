@@ -10,6 +10,9 @@ const transactionList = document.getElementById('transaction-list');
 const totalIncome = document.getElementById('total-income');
 const totalExpense = document.getElementById('total-expense');
 const balance = document.getElementById('balance');
+const categorySelect = document.getElementById('category');
+const filterCategory = document.getElementById('filter-category');
+const filterType = document.getElementById('filter-type');
 
 // This function runs every time we add or delete a transaction
 function updateSummary() {
@@ -31,15 +34,24 @@ function updateSummary() {
 
 // This function renders the transaction list on screen
 function renderTransactions() {
+    const selectedCategory = filterCategory.value;
+    const selectedType = filterType.value;
+
+    const filtered = transactions.filter(t => {
+        const categoryMatch = selectedCategory === 'all' || t.category === selectedCategory;
+        const typeMatch = selectedType === 'all' || t.type === selectedType;
+        return categoryMatch && typeMatch;
+    });
+
     transactionList.innerHTML = '';
 
-    transactions.forEach((t, index) => {
+    filtered.forEach((t, index) => {
         const li = document.createElement('li');
         li.classList.add(t.type === 'income' ? 'income-item' : 'expense-item');
         li.innerHTML = `
-            <span>${t.description}</span>
+            <span>${t.description} <small>(${t.category})</small></span>
             <span>${t.type === 'income' ? '+' : '-'}₹${t.amount}</span>
-            <button class="delete-btn" onclick="deleteTransaction(${index})">🗑</button>
+            <button class="delete-btn" onclick="deleteTransaction(${transactions.indexOf(t)})">🗑</button>
         `;
         transactionList.appendChild(li);
     });
@@ -52,6 +64,7 @@ function addTransaction() {
     const description = descriptionInput.value.trim();
     const amount = parseFloat(amountInput.value);
     const type = typeSelect.value;
+    const category = categorySelect.value;
 
     // Basic validation
     if (description === '') {
@@ -68,7 +81,8 @@ function addTransaction() {
         id: Date.now(),
         description:description,
         amount:amount,
-        type:type
+        type:type,
+        category:category
     };
 
     // Add to array and re-render
@@ -108,3 +122,6 @@ function loadFromLocalStorage() {
 
 // Load saved transactions when page opens
 loadFromLocalStorage();
+
+filterCategory.addEventListener('change', renderTransactions);
+filterType.addEventListener('change', renderTransactions);
