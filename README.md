@@ -1,6 +1,9 @@
 # 💰 Personal Finance Tracker
 
+🌐 **Live Demo:** [Click here](https://manyaa0909.github.io/finance-tracker)
+
 A responsive web application to track personal income and expenses with category-wise filtering, real-time balance calculation, and visual expense breakdown using charts.
+
 
 ---
 
