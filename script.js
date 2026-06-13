@@ -73,7 +73,9 @@ function addTransaction() {
 
     // Add to array and re-render
     transactions.push(transaction);
+    
     renderTransactions();
+    saveToLocalStorage();
 
     // Clear the inputs
     descriptionInput.value = '';
@@ -84,7 +86,25 @@ function addTransaction() {
 function deleteTransaction(index) {
     transactions.splice(index, 1);
     renderTransactions();
+    saveToLocalStorage();
 }
 
 // Listen for button click
 addBtn.addEventListener('click', addTransaction);
+
+// Save transactions to localStorage
+function saveToLocalStorage() {
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+}
+
+// Load transactions from localStorage
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem('transactions');
+    if (saved) {
+        transactions = JSON.parse(saved);
+        renderTransactions();
+    }
+}
+
+// Load saved transactions when page opens
+loadFromLocalStorage();
